@@ -2,7 +2,12 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
-import { createInventory } from './controllers';
+import {
+  createInventory,
+  updateInventory,
+  getSingleInventoryById,
+  getInventoryDetailsById,
+} from './controllers';
 
 dotenv.config();
 
@@ -15,8 +20,23 @@ app.get('/health', (req, res) => {
   res.status(200).json({ health: 'ok' });
 });
 
+app.use((req, res, next) => {
+  const allowedOrigins = ['http://localhost:8081', 'http://127.0.0.1:8081'];
+  const origin = req.headers.origin || '';
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    next();
+  } else {
+    res.status(403).json({ message: 'Forbidden' });
+  }
+});
+
 //routes
-app.post('/inventory', createInventory);
+app.put('/inventories/:id', updateInventory);
+app.post('/inventories', createInventory);
+app.get('/inventories/:id/details', getInventoryDetailsById);
+app.get('/inventories/:id', getSingleInventoryById);
 
 app.use((req, res) => {
   res.status(404).json({ message: 'not found' });
