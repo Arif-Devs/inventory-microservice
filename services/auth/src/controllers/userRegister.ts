@@ -65,7 +65,7 @@ const userRegistration = async (
     await axios.post(`${USER_SERVICE}/users`, {
       authUserId: user.id,
       name: user.name,
-      email: user.email,
+      email: user.email
     });
 
     // generate verification code
