@@ -25,8 +25,7 @@ const createLoginHistory = async (info: LoginHistory) => {
 
 const userLogin = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const ipAddress =
-      (req.headers['x-forwarded-for'] as string) || req.ip || '';
+    const ipAddress = (req.headers['x-forwarded-for'] as string) || req.ip || '';
     const userAgent = req.headers['user-agent'] || '';
 
     // Validate the request body
@@ -46,10 +45,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     // compare password
-    const isMatch = await bcrypt.compare(
-      parsedBody.data.password,
-      user.password
-    );
+    const isMatch = await bcrypt.compare(parsedBody.data.password, user.password);
     if (!isMatch) {
       await createLoginHistory({
         userId: user.id,
@@ -65,7 +61,7 @@ const userLogin = async (req: Request, res: Response, next: NextFunction) => {
       await createLoginHistory({
         userId: user.id,
         userAgent,
-        ipAddress,
+        ipAddress, 
         attempt: 'FAILED',
       });
       return res.status(400).json({ message: 'User not verified' });
