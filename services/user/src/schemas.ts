@@ -8,6 +8,4 @@ export const UserCreateDTOSchema = z.object({
   phone: z.string().optional(),
 });
 
-export const UserUpdateSchema = UserCreateDTOSchema.omit({
-  authUserId: true,
-}).partial();
+export const UserUpdateSchema = UserCreateDTOSchema.omit({authUserId: true}).partial();

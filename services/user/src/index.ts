@@ -30,6 +30,11 @@ app.get('/health', (req, res) => {
 app.get('/users/:id', getUserById);
 app.post('/users', createUser);
 
+//404 error
+app.use((req, res)=>{
+  res.status(404).json({message: 'Not found'})
+})
+
 app.use((err, req, res, next) => {
   console.log(err.stack);
   res.status(500).json({ message: 'internal server error' });
