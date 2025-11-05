@@ -2,11 +2,7 @@ import prisma from '@/prisma';
 import { ProductUpdateDTOSchema } from '@/schemas';
 import { Request, Response, NextFunction } from 'express';
 
-const updateProduct = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
+const updateProduct = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		// verify if the request body is valid
 		const parsedBody = ProductUpdateDTOSchema.safeParse(req.body);

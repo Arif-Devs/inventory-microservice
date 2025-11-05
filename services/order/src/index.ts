@@ -2,8 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
-import {createProduct,getProductDetails,getProducts} from './controllers';
-import updateProduct from './controllers/updateProducts';
+import { checkout, getOrderById, getOrders } from './controllers';
 
 dotenv.config();
 
@@ -17,10 +16,9 @@ app.get('/health', (_req, res) => {
 });
 
 // routes
-app.get('/products/:id', getProductDetails);
-app.put('/products/:id', updateProduct);
-app.get('/products', getProducts);
-app.post('/products', createProduct);
+app.post('/orders/checkout', checkout);
+app.get('/orders/:id', getOrderById);
+app.get('/orders', getOrders);
 
 // 404 handler
 app.use((_req, res) => {
@@ -29,11 +27,12 @@ app.use((_req, res) => {
 
 // Error handler
 app.use((err, _req, res, _next) => {
+	console.error(err.stack);
 	res.status(500).json({ message: 'Internal server error' });
 });
 
-const port = process.env.PORT || 4001;
-const serviceName = process.env.SERVICE_NAME || 'Product-Service';
+const port = process.env.PORT || 4007;
+const serviceName = process.env.SERVICE_NAME || 'Order-Service';
 
 app.listen(port, () => {
 	console.log(`${serviceName} is running on port ${port}`);

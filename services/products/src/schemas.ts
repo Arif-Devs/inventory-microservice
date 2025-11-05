@@ -8,3 +8,7 @@ export const productCreateDTOSchema = z.object({
   price: z.number().optional().default(0),
   status: z.nativeEnum(Status).optional().default(Status.DRAFT),
 });
+
+export const ProductUpdateDTOSchema = productCreateDTOSchema.omit({
+	sku: true,
+}).partial();
