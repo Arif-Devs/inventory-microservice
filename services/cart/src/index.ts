@@ -1,14 +1,14 @@
-import express from 'express';
 import dotenv from 'dotenv';
-import helmet from 'helmet';
+import express from 'express';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import morgan from 'morgan';
-import {addToCart, clearCart, getMyCart} from './controllers'
-import './events/onKeyExpires'
+import './events/onKeyExpires';
+import './queue/consumer';
+import router from './routes/index';
 
 
 dotenv.config();
-
 const app = express();
 
 // security middleware
@@ -24,23 +24,13 @@ const limiter = rateLimit({
       .json({ message: 'Too many requests, please try again later.' });
   },
 });
-app.use('/api', limiter);
-
-// request logger
-app.use(morgan('dev'));
 app.use(express.json());
+app.use('/api', limiter);
+app.use("/", router);
+// request logger
 
-// TODO: Auth middleware
+app.use(morgan('dev'));
 
-// routes
-app.post('/cart/add-to-cart', addToCart)
-app.get('/cart/me', getMyCart)
-app.get('/cart/clear', clearCart);
-
-// health check
-app.get('/health', (_req, res) => {
-  res.json({ message: 'cart is running' });
-});
 
 // 404 handler
 app.use((_req, res) => {

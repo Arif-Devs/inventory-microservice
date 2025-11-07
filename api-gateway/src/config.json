@@ -1,86 +1,153 @@
 {
   "services": {
-    "product": {
-      "url": "http://localhost:4001",
+    "auth": {
+      "url": "http://localhost:4003",
       "routes": [
         {
-          "path": "/products",
-          "methods": [
-           "get"          
-          ],
-          "middlewares":["auth"]
+          "path": "/auth/register",
+          "methods": ["post"],
+          "middlewares": []
         },
         {
-          "path": "/products",
-          "methods": [
-           "post"          
-          ],
-          "middlewares":["auth"]
+          "path": "/auth/login",
+          "methods": ["post"],
+          "middlewares": []
         },
         {
-          "path": "/products/:id",
+          "path": "/auth/verify-token",
+          "methods": ["post"],
+          "middlewares": []
+        },
+        {
+          "path": "/auth/verify-email",
+          "methods": ["post"],
+          "middlewares": []
+        }
+      ]
+    },
+
+    "cart": {
+      "url": "http://localhost:4007",
+      "routes": [
+        {
+          "path": "/cart/add-to-cart",
+          "methods": ["post"],
+          "middlewares": []
+        },
+        {
+          "path": "/cart/me",
+          "methods": ["get"],
+          "middlewares": []
+        },
+        {
+          "path": "/cart/clear",
           "methods": ["get"],
           "middlewares": []
         }
       ]
     },
+
+    "email": {
+      "url": "http://localhost:4005",
+      "routes": [
+        {
+          "path": "/emails/send",
+          "methods": ["post"],
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/emails",
+          "methods": ["get"],
+          "middlewares": ["auth"]
+        }
+      ]
+    },
+
     "inventory": {
       "url": "http://localhost:4002",
       "routes": [
         {
-          "path": "/inventories/:id",
-          "methods": ["put"],
-          "middlewares":["auth"]
-        },
-        {
           "path": "/inventories/:id/details",
           "methods": ["get"],
-          "middlewares":["auth"]
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/inventories/:id",
+          "methods": ["get"],
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/inventories/:id",
+          "methods": ["put"],
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/inventories",
+          "methods": ["post"],
+          "middlewares": ["auth"]
         }
       ]
     },
-    "auth":{
-      "url": "http://localhost:4003",
-      "routes":[
+
+    "order": {
+      "url": "http://localhost:4006",
+      "routes": [
         {
-        "path": "/auth/register",
-        "methods": [
-          "post"
-        ], 
-       "middlewares":[]
-      },
-      {
-        "path": "/auth/login",
-        "methods":[
-          "post"
-        ],
-        "middlewares": []
-      },
-      {
-        "path": "/auth/verify-email",
-        "methods":[
-          "post"
-        ],
-        "middlewares":[]
-      },
-      {
-        "path": "/auth/verify-token",
-        "methods": [
-          "post"
-        ],
-        "middlewares":[]
-       }
-     ]
+          "path": "/orders/checkout",
+          "methods": ["post"],
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/orders/:id",
+          "methods": ["get"],
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/orders",
+          "methods": ["get"],
+          "middlewares": ["auth"]
+        }
+      ]
     },
-    "user":{
+
+    "product": {
+      "url": "http://localhost:4001",
+      "routes": [
+        {
+          "path": "/products/:id",
+          "methods": ["get"],
+          "middlewares": []
+        },
+        {
+          "path": "/products/:id",
+          "methods": ["put"],
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/products",
+          "methods": ["get"],
+          "middlewares": []
+        },
+        {
+          "path": "/products",
+          "methods": ["post"],
+          "middlewares": ["auth"]
+        }
+      ]
+    },
+
+    "user": {
       "url": "http://localhost:4004",
       "routes": [
         {
-          "path":"/user/:id",
-          "methods": [
-            "get"
-          ],
-          "middlewares":["auth"]
+          "path": "/users/:id",
+          "methods": ["get"],
+          "middlewares": ["auth"]
+        },
+        {
+          "path": "/users",
+          "methods": ["post"],
+          "middlewares": ["auth"]
         }
       ]
     }

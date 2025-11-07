@@ -2,8 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
-import {createProduct,getProductDetails,getProducts} from './controllers';
-import updateProduct from './controllers/updateProducts';
+import router from './routes';
 
 dotenv.config();
 
@@ -11,16 +10,9 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
+app.use("/", router);
 
-app.get('/health', (_req, res) => {
-	res.status(200).json({ status: 'UP' });
-});
 
-// routes
-app.get('/products/:id', getProductDetails);
-app.put('/products/:id', updateProduct);
-app.get('/products', getProducts);
-app.post('/products', createProduct);
 
 // 404 handler
 app.use((_req, res) => {

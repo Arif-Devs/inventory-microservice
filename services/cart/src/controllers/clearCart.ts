@@ -1,5 +1,5 @@
-import redis from '@/redis';
-import { Request, Response, NextFunction } from 'express';
+import redis from '@/config/redis';
+import { NextFunction, Request, Response } from 'express';
 
 const clearCart = async (req: Request, res: Response, next: NextFunction) => {
 	try {

@@ -1,19 +1,15 @@
-import prisma from '@/prisma';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { InventoryService } from '../service/getInventoryByIdService';
 
-const getInventoryById = async (
+export const getInventoryById = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
 	try {
 		const { id } = req.params;
-		const inventory = await prisma.inventory.findUnique({
-			where: { id },
-			select: {
-				quantity: true,
-			},
-		});
+
+		const inventory = await InventoryService.getInventoryById(id);
 
 		if (!inventory) {
 			return res.status(404).json({ message: 'Inventory not found' });
@@ -25,4 +21,4 @@ const getInventoryById = async (
 	}
 };
 
-export default getInventoryById;
+export default getInventoryById

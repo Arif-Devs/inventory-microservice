@@ -1,5 +1,5 @@
-import {Redis} from 'ioredis'
-import { REDIS_HOST, REDIS_PORT } from './config'
+import { Redis } from 'ioredis';
+import { REDIS_HOST, REDIS_PORT } from './redisConfig';
 
 const redis = new Redis({
     host: REDIS_HOST,

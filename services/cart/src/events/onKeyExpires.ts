@@ -1,6 +1,6 @@
-import { REDIS_HOST, REDIS_PORT } from "@/config";
-import clearData from "@/services";
-import {Redis} from "ioredis";
+import clearData from "@/services/clearDataService";
+import { Redis } from "ioredis";
+import { REDIS_HOST, REDIS_PORT } from "../config/redisConfig";
 
 const redis = new Redis({
     host: REDIS_HOST,

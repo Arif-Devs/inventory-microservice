@@ -1,21 +1,14 @@
-import prisma from '@/prisma';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { getProductsService } from '../service/getProducts';
 
 const getProducts = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const products = await prisma.product.findMany({
-      select: {
-        id: true,
-        sku: true,
-        name: true,
-        price: true,
-        inventoryId: true,
-      },
-    });
-    res.status(200).json({ data: products });
+    const result = await getProductsService()
+
+    return res.status(result.status).json({ data: result.data });
   } catch (error) {
     next(error);
   }
 };
 
-export default getProducts;
+export default getProducts

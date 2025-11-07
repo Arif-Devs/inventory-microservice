@@ -1,12 +1,14 @@
-import prisma from '@/prisma';
 import { Request, Response, NextFunction } from 'express';
+import { getOrdersService } from '../service/getOrder';
 
-const getOrders = async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const orders = await prisma.order.findMany({});
-		res.status(200).json(orders);
-	} catch (error) {
-		next(error);
-	}
+export const getOrders = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await getOrdersService();
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    next(error);
+  }
 };
-export default getOrders;
+
+
+export default getOrders

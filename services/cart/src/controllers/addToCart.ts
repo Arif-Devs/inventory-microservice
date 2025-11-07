@@ -1,64 +1,45 @@
-import { CART_TTL, INVENTORY_SERVICE } from "@/config";
-import redis from "@/redis";
-import { cartItemSchema } from "@/schemas";
-import axios from "axios";
 import { NextFunction, Request, Response } from "express";
-import { v4 as uuid } from "uuid";
+import { CartService } from "../services/addToCartService";
 
-const addToCart = async (req: Request, res: Response, next: NextFunction) => {
+export const addToCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        // 1. Validate request body
-        const parseBody = cartItemSchema.safeParse(req.body)
-        if (!parseBody.success) {
-            return res.status(400).json({ error: parseBody.error.errors })
+        // 1. Validate request
+        const parsedBody = CartService.validateBody(req.body);
+        if (!parsedBody.success) {
+            return res.status(400).json({ error: parsedBody.error.errors });
         }
 
-        let cartSessionId = (req.headers["x-cart-session-id"] as string) || null
-        //check the existence of session id
-        if (cartSessionId) {
-            const exist = await redis.exists(`sessions:${cartSessionId}`)
-            console.log('Session exist: ', exist);
+        const { productId, inventoryId, quantity } = parsedBody.data;
 
-            if (!exist) {
-                cartSessionId = null
-            }
-        }
-          //if session is expired create a new one
-        if (!cartSessionId) {
-            cartSessionId = uuid()
-            console.log('new session id:', cartSessionId);
-          // set session in redis store
+        // 2. Get or create session
+        const incomingSessionId = req.headers["x-cart-session-id"] as string;
+        const cartSessionId = await CartService.getOrCreateSession(incomingSessionId);
 
-            await redis.setex(`sessions:${cartSessionId!}`, CART_TTL, cartSessionId!)
-            //set the cart session in header
-            res.setHeader('x-cart-session-id', cartSessionId!)
+        // Set session in header (if newly created)
+        res.setHeader("x-cart-session-id", cartSessionId!);
+
+        // 3. Inventory check
+        const available = await CartService.checkInventory(inventoryId, quantity);
+        if (!available) {
+            return res.status(400).json({ message: "product is not available in inventory" });
         }
 
-        //check the inventory is available
-        const {data} = await axios.get(`${INVENTORY_SERVICE}/inventories/${parseBody.data.inventoryId}`)
-            if(Number(data.quantity) < parseBody.data.quantity){
-                return res.status(400).json({message: 'product is not available in inventory'})
-            }
+        // 4. Add to cart
+        await CartService.addItemToCart(cartSessionId!, productId, {
+            inventoryId,
+            quantity,
+        });
 
-        await redis.hset(`cart:${cartSessionId!}`, parseBody.data.productId, JSON.stringify({
-            inventoryId: parseBody.data.inventoryId,
-            quantity: parseBody.data.quantity
-        }))
+        // 5. Update inventory
+        await CartService.updateInventory(inventoryId, quantity);
 
-        //update inventory
-        await axios.put(`${INVENTORY_SERVICE}/inventories/${parseBody.data.inventoryId}`, 
-            {
-                quantity: parseBody.data.quantity,
-                actionType: 'OUT'
-            }
-        )
-        
-
-        return res.status(200).json({ message: 'your item is added to cart successfully!', cartSessionId })
-
+        return res.status(200).json({
+            message: "your item is added to cart successfully!",
+            cartSessionId,
+        });
     } catch (error) {
-        next(error)
+        next(error);
     }
-}
+};
 
 export default addToCart

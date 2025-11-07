@@ -1,23 +1,11 @@
-import prisma from '@/prisma';
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { InventoryService } from '../service/getInventoryDetailsService';
 
-const getInventoryDetails = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
+export const getInventoryDetails = async (req: Request,res: Response,next: NextFunction) => {
 	try {
 		const { id } = req.params;
-		const inventory = await prisma.inventory.findUnique({
-			where: { id },
-			include: {
-				histories: {
-					orderBy: {
-						createdAt: 'desc',
-					},
-				},
-			},
-		});
+
+		const inventory = await InventoryService.getInventoryDetails(id);
 
 		if (!inventory) {
 			return res.status(404).json({ message: 'Inventory not found' });
@@ -28,5 +16,4 @@ const getInventoryDetails = async (
 		next(err);
 	}
 };
-
-export default getInventoryDetails;
+export default getInventoryDetails

@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import morgan from 'morgan';
-import { checkout, getOrderById, getOrders } from './controllers';
+import router from './routes';
 
 dotenv.config();
 
@@ -10,15 +10,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
+app.use("/", router);
 
-app.get('/health', (_req, res) => {
-	res.status(200).json({ status: 'UP' });
-});
-
-// routes
-app.post('/orders/checkout', checkout);
-app.get('/orders/:id', getOrderById);
-app.get('/orders', getOrders);
 
 // 404 handler
 app.use((_req, res) => {

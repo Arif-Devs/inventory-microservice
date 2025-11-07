@@ -1,27 +1,18 @@
-import prisma from '@/prisma';
 import { Request, Response, NextFunction } from 'express';
+import { getOrderByIdService } from "../service/getOrderById";
 
-const getOrderById = async (
-	req: Request,
-	res: Response,
-	next: NextFunction
-) => {
-	try {
-		const order = await prisma.order.findUnique({
-			where: { id: req.params.id },
-			include: {
-				orderItems: true,
-			},
-		});
+export const getOrderById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = await getOrderByIdService(req.params.id);
 
-		if (!order) {
-			res.status(404).json({ message: 'Order not found' });
-		}
+    if (!result.success) {
+      return res.status(result.status).json({ message: result.message });
+    }
 
-		res.status(200).json(order);
-	} catch (error) {
-		next(error);
-	}
+    return res.status(result.status).json(result.data);
+  } catch (error) {
+    next(error);
+  }
 };
 
-export default getOrderById;
+export default getOrderById

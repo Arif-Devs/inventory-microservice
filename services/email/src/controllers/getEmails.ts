@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import prisma from '@/prisma';
+import prisma from '@/config/prisma';
+import { NextFunction, Request, Response } from 'express';
 
 const getEmails = async (_req: Request, res: Response, next: NextFunction) => {
   try {

@@ -1,6 +1,6 @@
-import { INVENTORY_SERVICE } from "@/config"
-import redis from "@/redis"
+import redis from "@/config/redis"
 import axios from "axios"
+import { INVENTORY_SERVICE } from "../config/redisConfig"
 
 const clearData = async(id: string)=>{
     try {
